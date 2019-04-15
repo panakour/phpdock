@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  php-fpm:
+    build:
+      context: ./php-fpm
+      args:
+        - INSTALL_XDEBUG=true
+        - INSTALL_MEMCACHED=false
+        - PHP_VERSION=${PHP_VERSION}
+        - INSTALL_PHPREDIS=${INSTALL_PHPREDIS}
+    environment:
+      - EXPOSE_PHP=true
+      - PHP_IDE_CONFIG=serverName=myide
+      - PHP_MAX_EXECUTION_TIME=545
+      - PHP_MEMORY_LIMIT=512
+      - PHP_POST_MAX_SIZE=222
+      - PHP_UPLOAD_MAX_FILESIZE=80
+      - PHP_OPCACHE_MEMORY_CONSUMPTION=${PHP_OPCACHE_MEMORY_CONSUMPTION}
+
+  nginx:
+    build:
+      context: ./nginx
+      args:
+        - PHP_UPSTREAM_CONTAINER=php-fpm
+        - PHP_UPSTREAM_PORT=9000
+    environment:
+      - NGINX_SERVER_TOKENS=on
+
+  mysql:
+    ports:
+      - "3306:3306"
