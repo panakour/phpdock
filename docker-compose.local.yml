@@ -24,8 +24,11 @@ services:
       args:
         - PHP_UPSTREAM_CONTAINER=php-fpm
         - PHP_UPSTREAM_PORT=9000
+    volumes:
+      - ${NGINX_SSL_PATH}:/etc/nginx/ssl
     environment:
       - NGINX_SERVER_TOKENS=on
+      - SELF_SIGNED_SSL=1
 
   mysql:
     ports:
