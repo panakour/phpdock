@@ -5,10 +5,10 @@ services:
     build:
       context: ./php-fpm
       args:
-        - INSTALL_XDEBUG=true
-        - INSTALL_MEMCACHED=false
         - PHP_VERSION=${PHP_VERSION}
-        - INSTALL_PHPREDIS=${INSTALL_PHPREDIS}
+        - INSTALL_XDEBUG=true
+        - INSTALL_MEMCACHED=true
+        - INSTALL_PHPREDIS=true
     environment:
       - EXPOSE_PHP=true
       - PHP_IDE_CONFIG=serverName=myide
