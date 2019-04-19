@@ -44,3 +44,19 @@ services:
       - ${MYSQL_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
     networks:
       - backnet
+
+  memcached:
+    image: memcached:latest
+    volumes:
+      - ${DATA_PATH_HOST}/memcached:/var/lib/memcached
+    depends_on:
+      - php-fpm
+    networks:
+      - backnet
+
+  redis:
+    image: redis:latest
+    volumes:
+      - ${DATA_PATH_HOST}/redis:/data
+    networks:
+      - backnet
