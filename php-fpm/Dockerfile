@@ -108,13 +108,7 @@ RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
 #--------------------------------------------------------------------------
 #
 ARG PHP_INI_FILE=/usr/local/etc/php/php.ini
-RUN touch ${PHP_INI_FILE} \
-    && echo "expose_php = Off" >> ${PHP_INI_FILE} \
-    && echo "max_execution_time = 30" >> ${PHP_INI_FILE} \
-    && echo "memory_limit = 128M" >> ${PHP_INI_FILE} \
-    && echo "post_max_size = 8M" >> ${PHP_INI_FILE} \
-    && echo "upload_max_filesize = 2M" >> ${PHP_INI_FILE}
-
+COPY ./php.ini ${PHP_INI_FILE}
 
 #
 #--------------------------------------------------------------------------
