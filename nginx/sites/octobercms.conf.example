@@ -78,5 +78,5 @@ server {
         log_not_found off;
     }
     error_log /var/log/nginx/octobercms_error.log;
-    access_log /var/log/nginx/octobercms_access.log;
+    access_log off;
 }
