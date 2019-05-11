@@ -108,7 +108,7 @@ RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
 #--------------------------------------------------------------------------
 #
 ARG PHP_INI_FILE=/usr/local/etc/php/php.ini
-COPY ./php.ini ${PHP_INI_FILE}
+ADD https://raw.githubusercontent.com/php/php-src/PHP-${PHP_VERSION}/php.ini-production ${PHP_INI_FILE}
 
 #
 #--------------------------------------------------------------------------
