@@ -129,7 +129,7 @@ RUN apk --no-cache add shadow && \
     && apk del shadow
 
 
-ADD ./start.sh /opt/start.sh
+COPY ./start.sh /opt/start.sh
 
 EXPOSE 9000
 

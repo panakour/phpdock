@@ -18,7 +18,7 @@ RUN echo "upstream php-upstream { server ${PHP_UPSTREAM_CONTAINER}:${PHP_UPSTREA
     && rm /etc/nginx/conf.d/default.conf
 
 
-ADD ./start.sh /opt/start.sh
+COPY ./start.sh /opt/start.sh
 
 EXPOSE 80 443
 
