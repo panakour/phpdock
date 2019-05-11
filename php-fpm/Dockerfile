@@ -128,6 +128,7 @@ RUN apk --no-cache add shadow && \
     usermod -u 1000 www-data \
     && apk del shadow
 
+COPY ./crontab /etc/crontabs/root
 
 COPY ./start.sh /opt/start.sh
 

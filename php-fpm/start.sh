@@ -1,5 +1,6 @@
 #!/bin/bash
 
+/usr/sbin/crond
 
 # Display Version Details
 if [[ "$EXPOSE_PHP" == "true" ]] ; then
