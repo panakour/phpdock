@@ -4,11 +4,10 @@ FROM php:${PHP_VERSION}-fpm-alpine3.9
 
 LABEL maintainer="Panagiotis Koursaris <panakourweb@gmail.com>"
 
-#
-#--------------------------------------------------------------------------
-# Install PHP dependencies and extensions
-#--------------------------------------------------------------------------
-#
+
+###########################################################################
+# Install PHP dependencies and extensions:
+###########################################################################
 RUN apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
     && apk add --no-cache \
@@ -45,11 +44,9 @@ RUN apk add --no-cache --virtual .build-deps \
     && apk del -f .build-deps
 
 
-#
-#--------------------------------------------------------------------------
-# Redis extension
-#--------------------------------------------------------------------------
-#
+###########################################################################
+# redis:
+###########################################################################
 ARG INSTALL_PHPREDIS=false
 RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
     apk add --no-cache --virtual .build-deps \
@@ -60,11 +57,9 @@ RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
 ;fi
 
 
-#
-#--------------------------------------------------------------------------
-# xdebug
-#--------------------------------------------------------------------------
-#
+###########################################################################
+# xdebug:
+###########################################################################
 ARG INSTALL_XDEBUG=false
 ARG XDEBUG_FILE=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
@@ -83,38 +78,43 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
 
 
 ###########################################################################
-# PHP Memcached:
+# ImageMagick:
 ###########################################################################
-ARG INSTALL_MEMCACHED=false
-
-
-ENV MEMCACHED_DEPS zlib-dev libmemcached-dev cyrus-sasl-dev
-RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
-    apk add --no-cache --update libmemcached-libs zlib \
-    && set -xe \
-        && apk add --no-cache --update --virtual .phpize-deps $PHPIZE_DEPS \
-        && apk add --no-cache --update --virtual .memcached-deps $MEMCACHED_DEPS \
-        && pecl install memcached \
-        && echo "extension=memcached.so" > /usr/local/etc/php/conf.d/20_memcached.ini \
-        && rm -rf /usr/share/php7 \
-        && rm -rf /tmp/* \
-        && apk del .memcached-deps .phpize-deps \
+ARG INSTALL_IMAGEMAGICK=false
+RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
+    apk add --no-cache --virtual .build-deps imagemagick-dev \
+    $PHPIZE_DEPS \
+    && apk add --no-cache --virtual .imagick-runtime-deps imagemagick \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick \
+    && apk del -f .build-deps \
 ;fi
 
 
-#
-#--------------------------------------------------------------------------
-# php.ini
-#--------------------------------------------------------------------------
-#
+###########################################################################
+# PHP Memcached:
+###########################################################################
+ARG INSTALL_MEMCACHED=false
+RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
+    apk add --no-cache --update libmemcached-libs zlib \
+    && apk add --no-cache --update --virtual .build-deps zlib-dev libmemcached-dev cyrus-sasl-dev \
+    $PHPIZE_DEPS \
+    && pecl install memcached \
+    && echo "extension=memcached.so" > /usr/local/etc/php/conf.d/20_memcached.ini \
+    && apk del -f .build-deps \
+;fi
+
+
+###########################################################################
+# php.ini:
+###########################################################################
 ARG PHP_INI_FILE=/usr/local/etc/php/php.ini
 ADD https://raw.githubusercontent.com/php/php-src/PHP-${PHP_VERSION}/php.ini-production ${PHP_INI_FILE}
 
-#
-#--------------------------------------------------------------------------
-# opcache
-#--------------------------------------------------------------------------
-#
+
+###########################################################################
+# opcache:
+###########################################################################
 ARG OPCACHE_FILE=/usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 RUN echo "opcache.enable=On" >> ${OPCACHE_FILE} \
     && echo "opcache.memory_consumption=128" >> ${OPCACHE_FILE}
