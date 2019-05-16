@@ -74,6 +74,8 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     && echo "xdebug.remote_host=172.17.0.1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.remote_port=9000" >> ${XDEBUG_FILE} \
     && echo "xdebug.remote_log=/tmp/xdebug.log" >> ${XDEBUG_FILE} \
+    && touch "/tmp/xdebug.log" \
+    && chmod 666 "/tmp/xdebug.log" \
 ;fi
 
 
