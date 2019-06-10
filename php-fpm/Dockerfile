@@ -20,8 +20,6 @@ RUN apk add --no-cache --virtual .build-deps \
         libjpeg-turbo-dev \
         libzip-dev \
         bzip2-dev \
-        git \
-    && rm -rf /tmp/pear \
     # Misic extensions
     && docker-php-ext-install \
         pdo_mysql \
@@ -57,7 +55,7 @@ RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
 ;fi
 
 
-###########################################################################
+###########################################################################4
 # xdebug:
 ###########################################################################
 ARG INSTALL_XDEBUG=false
@@ -130,9 +128,13 @@ RUN apk --no-cache add shadow && \
     usermod -u 1000 www-data \
     && apk del shadow
 
+RUN rm -rf /tmp/pear
+
 COPY ./crontab /etc/crontabs/root
 
 COPY ./start.sh /opt/start.sh
+
+USER www-data
 
 EXPOSE 9000
 
