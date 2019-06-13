@@ -5,10 +5,8 @@ services:
     build:
       context: ./php-fpm
       args:
-        - INSTALL_XDEBUG=false
-        - PHP_VERSION=${PHP_VERSION}
-        - INSTALL_PHPREDIS=${INSTALL_PHPREDIS}
-    image: panakour/phpdock_php-fpm
+        - PHP_VERSION=7.3
+    image: panakour/phpdock_php-fpm:7.3
 
   nginx:
     build:
@@ -16,4 +14,4 @@ services:
       args:
         - PHP_UPSTREAM_CONTAINER=php-fpm
         - PHP_UPSTREAM_PORT=9000
-    image: panakour/phpdock_nginx
+    image: panakour/phpdock_nginx:1.16.0

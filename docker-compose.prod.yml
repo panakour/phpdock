@@ -5,14 +5,14 @@ services:
     image: panakour/phpdock_php-fpm:7.3
     restart: always
     environment:
-      - PHP_MAX_EXECUTION_TIME=${PHP_MAX_EXECUTION_TIME}
-      - PHP_MEMORY_LIMIT=${PHP_MEMORY_LIMIT}
-      - PHP_POST_MAX_SIZE=${PHP_POST_MAX_SIZE}
-      - PHP_UPLOAD_MAX_FILESIZE=${PHP_UPLOAD_MAX_FILESIZE}
-      - PHP_OPCACHE_MEMORY_CONSUMPTION=${PHP_OPCACHE_MEMORY_CONSUMPTION}
+      - PHP_MAX_EXECUTION_TIME=30
+      - PHP_MEMORY_LIMIT=256
+      - PHP_POST_MAX_SIZE=10
+      - PHP_UPLOAD_MAX_FILESIZE=3
+      - PHP_OPCACHE_MEMORY_CONSUMPTION=256
 
   nginx:
-    image: panakour/phpdock_nginx:1.15.10
+    image: panakour/phpdock_nginx:1.16.0
     restart: always
 
   mysql:

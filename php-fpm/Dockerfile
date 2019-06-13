@@ -134,8 +134,6 @@ COPY ./crontab /etc/crontabs/root
 
 COPY ./start.sh /opt/start.sh
 
-USER www-data
-
 EXPOSE 9000
 
 WORKDIR "/var/www"
