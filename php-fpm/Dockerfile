@@ -1,6 +1,6 @@
 ARG PHP_VERSION=${PHP_VERSION}
 
-FROM php:${PHP_VERSION}-fpm-alpine3.9
+FROM php:${PHP_VERSION}-fpm-alpine
 
 LABEL maintainer="Panagiotis Koursaris <panakourweb@gmail.com>"
 
@@ -63,7 +63,7 @@ ARG XDEBUG_FILE=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     apk add --no-cache --virtual .build-deps \
     $PHPIZE_DEPS \
-    && pecl install xdebug-2.7.2 \
+    && pecl install xdebug-2.8.0 \
     && docker-php-ext-enable xdebug \
     && apk del -f .build-deps \
     && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > ${XDEBUG_FILE} \
