@@ -3,13 +3,12 @@ version: '3.7'
 services:
   php-fpm:
     build:
-      context: ./php-fpm
+      context: ./php-fpm/7.4
       args:
-        - PHP_VERSION=${PHP_VERSION}
         - INSTALL_XDEBUG=true
         - INSTALL_MEMCACHED=true
         - INSTALL_PHPREDIS=true
-        - INSTALL_IMAGEMAGICK=false
+        - INSTALL_IMAGEMAGICK=true
     environment:
       - EXPOSE_PHP=true
       - PHP_IDE_CONFIG=serverName=myide

@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   php-fpm:
-    image: panakour/phpdock_php-fpm:7.3
+    image: panakour/phpdock_php-fpm:7.4
     restart: always
     environment:
       - PHP_MAX_EXECUTION_TIME=30

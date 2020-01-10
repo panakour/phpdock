@@ -1,4 +1,4 @@
-ARG PHP_VERSION=${PHP_VERSION}
+ARG PHP_VERSION=7.3
 
 FROM php:${PHP_VERSION}-fpm-alpine
 
@@ -130,9 +130,9 @@ RUN apk --no-cache add shadow && \
 
 RUN rm -rf /tmp/pear
 
-COPY ./crontab /etc/crontabs/root
+COPY crontab /etc/crontabs/root
 
-COPY ./start.sh /opt/start.sh
+COPY start.sh /opt/start.sh
 
 EXPOSE 9000
 
