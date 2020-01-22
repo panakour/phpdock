@@ -1,4 +1,4 @@
-FROM nginx:1.16.0-alpine
+FROM nginx:alpine
 
 LABEL maintainer="Panagiotis Koursaris <panakourweb@gmail.com>"
 
