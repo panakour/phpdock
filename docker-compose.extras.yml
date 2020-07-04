@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  redis:
+    image: redis:latest
+    volumes:
+      - ${DATA_PATH_HOST}/redis:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - backnet
+
+  memcached:
+    image: memcached:latest
+    volumes:
+      - ${DATA_PATH_HOST}/memcached:/var/lib/memcached
+    ports:
+      - "11211:11211"
+    depends_on:
+      - php-fpm
+    networks:
+      - backnet
+
+  tor:
+    image: dperson/torproxy
+    ports:
+      - 8118:8118
+      - 9050:9050
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - backnet

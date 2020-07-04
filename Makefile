@@ -1,6 +1,4 @@
 uplocal:
-	docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
-restartlocal:
-	docker-compose -f docker-compose.yml -f docker-compose.local.yml restart
+	docker-compose -f docker-compose.yml -f docker-compose.local.yml -f docker-compose.extras.yml up -d --build
 upprod:
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d nginx mysql
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
