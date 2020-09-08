@@ -29,6 +29,7 @@ server {
     ## Let nginx return 404 if static file not exists
     location ~ ^/storage/app/uploads/public { try_files $uri 404; }
     location ~ ^/storage/app/media { try_files $uri 404; }
+    location ~ ^/storage/app/resized { try_files $uri 404; }
     location ~ ^/storage/temp/public { try_files $uri 404; }
 
     location ~ ^/modules/.*/assets { try_files $uri 404; }
