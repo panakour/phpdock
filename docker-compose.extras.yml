@@ -41,3 +41,10 @@ services:
       - "9300:9300"
     networks:
       - backnet
+
+  chromium:
+    image: montferret/chromium
+    ports:
+      - "9222:9222"
+    networks:
+      - backnet
