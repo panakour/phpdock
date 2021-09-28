@@ -48,3 +48,26 @@ services:
       - "9222:9222"
     networks:
       - backnet
+
+  php-fpm7.1:
+    build:
+      context: ./php-fpm/7.1
+      args:
+        - INSTALL_XDEBUG=true
+        - INSTALL_MEMCACHED=true
+        - INSTALL_PHPREDIS=true
+        - INSTALL_IMAGEMAGICK=true
+    environment:
+      - EXPOSE_PHP=true
+      - PHP_IDE_CONFIG=serverName=myide
+      - PHP_MAX_EXECUTION_TIME=545
+      - PHP_MEMORY_LIMIT=512
+      - PHP_POST_MAX_SIZE=222
+      - PHP_UPLOAD_MAX_FILESIZE=80
+      - PHP_OPCACHE_MEMORY_CONSUMPTION=256
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+    expose:
+      - "9000"
+    networks:
+      - backnet
