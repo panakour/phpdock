@@ -36,7 +36,6 @@ RUN apk add --no-cache --virtual .build-deps \
     && docker-php-ext-install -j${NPROC} gd \
     # composer
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
-    && composer global require "hirak/prestissimo" \
     # remove caches
     && apk del -f .build-deps
 
