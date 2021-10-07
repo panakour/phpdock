@@ -9,6 +9,7 @@ services:
         - INSTALL_MEMCACHED=true
         - INSTALL_PHPREDIS=true
         - INSTALL_IMAGEMAGICK=true
+        - INSTALL_DEV_TOOLS=true
     environment:
       - EXPOSE_PHP=true
       - PHP_IDE_CONFIG=serverName=myide

@@ -80,15 +80,15 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
 ###########################################################################
 # ImageMagick: not supported yet for php 8
 ###########################################################################
-#ARG INSTALL_IMAGEMAGICK=false
-#RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
-#    apk add --no-cache --virtual .build-deps imagemagick-dev \
-#    $PHPIZE_DEPS \
-#    && apk add --no-cache --virtual .imagick-runtime-deps imagemagick \
-#    && pecl install imagick \
-#    && docker-php-ext-enable imagick \
-#    && apk del -f .build-deps \
-#;fi
+ARG INSTALL_IMAGEMAGICK=false
+RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
+    apk add --no-cache --virtual .build-deps imagemagick-dev \
+    $PHPIZE_DEPS \
+    && apk add --no-cache --virtual .imagick-runtime-deps imagemagick \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick \
+    && apk del -f .build-deps \
+;fi
 
 
 ###########################################################################
@@ -102,6 +102,14 @@ RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
     && pecl install memcached \
     && echo "extension=memcached.so" > /usr/local/etc/php/conf.d/20_memcached.ini \
     && apk del -f .build-deps \
+;fi
+
+###########################################################################
+# DEV TOOLS:
+###########################################################################
+ARG INSTALL_DEV_TOOLS=false
+RUN if [ ${INSTALL_DEV_TOOLS} = true ]; then \
+    apk add git \
 ;fi
 
 
