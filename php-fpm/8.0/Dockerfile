@@ -21,6 +21,7 @@ RUN apk add --no-cache --virtual .build-deps \
         libzip-dev \
         bzip2-dev \
         icu-dev \
+        libwebp-dev \
     # Misic extensions
     && docker-php-ext-install \
         pdo_mysql \
@@ -32,6 +33,7 @@ RUN apk add --no-cache --virtual .build-deps \
     # GD image extensions
     && docker-php-ext-configure gd \
         --enable-gd \
+        --with-webp \
         --with-freetype=/usr/include/ \
         --with-jpeg=/usr/include/ \
     && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
