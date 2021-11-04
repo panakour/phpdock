@@ -29,8 +29,9 @@ server {
         include fastcgi_params;
     }
 
-    location ~ /\.ht {
+    location ~ /\.  {
         deny all;
+        return 404;
     }
 
     location /.well-known/acme-challenge/ {
