@@ -31,7 +31,7 @@ services:
       - php-fpm
 
   mysql:
-    image: mysql:${MYSQL_VERSION}
+    image: mysql/mysql-server:${MYSQL_VERSION}
     command: --default-authentication-plugin=mysql_native_password # for mysql 8
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
