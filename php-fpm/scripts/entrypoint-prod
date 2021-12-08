@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+echo "► Starting Production Entrypoint..."
+
+exec entrypoint-base "${@}"

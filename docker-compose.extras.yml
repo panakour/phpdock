@@ -1,5 +1,6 @@
 version: '3.7'
 
+#this compose file containes extra images and should be combined with docker-compose.yml or docker-compose.prod.yml
 services:
   redis:
     image: redis:latest
@@ -49,22 +50,20 @@ services:
     networks:
       - backnet
 
-  php-fpm7.1:
+  php-fpm7.3:
     build:
-      context: ./php-fpm/7.1
+      context: ./php-fpm/
+      target: app-dev
       args:
-        - INSTALL_XDEBUG=true
+        - PHP_VERSION=7.3
         - INSTALL_MEMCACHED=true
         - INSTALL_PHPREDIS=true
         - INSTALL_IMAGEMAGICK=true
+        # To authenticate to private registry either use username / password, or Oauth key/secret / etc
+        # Please add Composer Auth JSON Object
+        - COMPOSER_AUTH="{}"
     environment:
-      - EXPOSE_PHP=true
-      - PHP_IDE_CONFIG=serverName=myide
-      - PHP_MAX_EXECUTION_TIME=545
-      - PHP_MEMORY_LIMIT=512
-      - PHP_POST_MAX_SIZE=222
-      - PHP_UPLOAD_MAX_FILESIZE=80
-      - PHP_OPCACHE_MEMORY_CONSUMPTION=256
+      - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
     expose:

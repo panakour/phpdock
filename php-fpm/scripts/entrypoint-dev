@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+echo "► Starting Development Entrypoint..."
+
+exec entrypoint-base "${@}"
