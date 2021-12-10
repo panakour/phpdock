@@ -186,7 +186,9 @@ RUN apk add git openssh vim;
 # For Xdebuger to work, it needs the docker host ID
 # - in Mac AND Windows, `host.docker.internal` resolve to Docker host IP
 # - in Linux, `172.17.0.1` is the host IP
-ENV XDEBUG_CLIENT_HOST="172.17.0.1"
+ENV XDEBUG_CLIENT_HOST=172.17.0.1
+ENV XDEBUG_IDE_KEY=myide
+ENV PHP_IDE_CONFIG="serverName=${XDEBUG_IDE_KEY}"
 RUN apk add --virtual .buildtime-deps ${PHPIZE_DEPS} \
  && pecl install xdebug-${XDEBUG_VERSION} && docker-php-ext-enable xdebug \
  && apk del -f .buildtime-deps
