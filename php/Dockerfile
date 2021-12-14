@@ -135,6 +135,28 @@ CMD ["php-fpm"]
 ##                                                   --- PROD ---
 ## ======================================================================================================================
 
+###########################################################################
+# install composer runtime dependinces and install app dependinces:
+###########################################################################
+FROM composer as vendor
+
+ARG PHP_VERSION
+ARG COMPOSER_AUTH
+# A Json Object with remote repository token to clone private Repos with composer
+# Reference: https://getcomposer.org/doc/03-cli.md#composer-auth
+ENV COMPOSER_AUTH $COMPOSER_AUTH
+
+# Copy Dependencies files
+COPY app/composer.json composer.json
+COPY app/composer.lock composer.lock
+
+# Set PHP Version of the Image
+RUN composer config platform.php ${PHP_VERSION}
+
+# Install Dependeinces
+RUN composer install -n --no-progress --ignore-platform-reqs --no-dev --prefer-dist --no-scripts --no-autoloader
+
+
 FROM base AS app
 
 USER root
@@ -142,9 +164,9 @@ USER root
 ###########################################################################
 # Prod Scripts/Configs:
 ###########################################################################
-COPY docker/*-prod /usr/local/bin/
+COPY scripts/*-prod /usr/local/bin/
 RUN  chmod +x /usr/local/bin/*-prod
-COPY docker/php/prod-*   $PHP_INI_DIR/conf.d/
+COPY prod-*   $PHP_INI_DIR/conf.d/
 
 ###########################################################################
 # Final Touch:

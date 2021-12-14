@@ -11,7 +11,7 @@ volumes:
 services:
   php-fpm:
     build:
-      context: ./php-fpm/
+      context: ./php/
       target: app-dev
       args:
         - PHP_VERSION=${PHP_VERSION}

@@ -52,7 +52,7 @@ services:
 
   php-fpm7.3:
     build:
-      context: ./php-fpm/
+      context: ./php/
       target: app-dev
       args:
         - PHP_VERSION=7.3
