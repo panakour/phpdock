@@ -61,7 +61,7 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
-      - ${MYSQL_CNF_FILE}:/etc/mysql/conf.d/my.cnf
+      - ${MYSQL_CNF_FILE}:/etc/mysql/my.cnf
       - ${DATA_PATH_HOST}/mysql:/var/lib/mysql
       - ${MYSQL_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
     ports:
