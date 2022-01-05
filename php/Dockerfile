@@ -45,8 +45,9 @@ RUN apk add --no-cache --virtual .build-deps \
         bcmath \
         zip \
         gd \
+        exif \
  # Pecl Extensions -------------------------------- \
- && pecl install apcu-5.1.20 && docker-php-ext-enable apcu \
+ && pecl install apcu-5.1.21 && docker-php-ext-enable apcu \
  # Cleanup ---------------------------------------- \
  # - Detect Runtime Dependencies of the installed extensions. \
  # - src: https://github.com/docker-library/wordpress/blob/master/latest/php7.4/fpm-alpine/Dockerfile \
