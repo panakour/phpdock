@@ -17,6 +17,9 @@ FROM php:${PHP_VERSION}-fpm-alpine AS base
 # Maintainer label
 LABEL maintainer="panakourweb@gmail.com"
 
+# pipefail. add the ability to pipe the output of a fail command. https://github.com/hadolint/hadolint/wiki/DL4006
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+
 # ------------------------------------- Install Packages Needed Inside Base Image --------------------------------------
 
 RUN apk add --no-cache tini zip
@@ -50,13 +53,11 @@ RUN apk add --no-cache --virtual .build-deps \
  && pecl install apcu-5.1.21 && docker-php-ext-enable apcu \
  # Cleanup ---------------------------------------- \
  # - Detect Runtime Dependencies of the installed extensions. \
- # - src: https://github.com/docker-library/wordpress/blob/master/latest/php7.4/fpm-alpine/Dockerfile \
+ # - src: https://github.com/docker-library/wordpress/blob/master/latest/php8.1/fpm-alpine/Dockerfile \
  && runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
-			| tr ',' '\n' \
-			| sort -u \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)"; \
+			| tr ',' '\n' | sort -u | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }'  \
+    )"; \
   # Save Runtime Deps in a virtual deps
 	apk add --no-network --virtual .php-extensions-rundeps $runDeps; \
   # Uninstall Everything we Installed (minus the runtime Deps)
