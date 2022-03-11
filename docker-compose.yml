@@ -15,6 +15,7 @@ services:
       target: app-dev
       args:
         - PHP_VERSION=${PHP_VERSION}
+        - PHP_EXTENSIONS=${PHP_EXTENSIONS}
         - INSTALL_MEMCACHED=true
         - INSTALL_PHPREDIS=true
         - INSTALL_IMAGEMAGICK=true

@@ -1,6 +1,5 @@
 ARG PHP_VERSION=8.0
 ARG COMPOSER_VERSION=2
-ARG XDEBUG_VERSION=3.1.2
 ARG COMPOSER_AUTH
 
 # -------------------------------------------------- Composer Image ----------------------------------------------------
@@ -25,56 +24,11 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 RUN apk add --no-cache tini zip
 
 # ---------------------------------------- Install / Enable PHP Extensions ---------------------------------------------
+ARG PHP_EXTENSIONS
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions ${PHP_EXTENSIONS}
 
-RUN apk add --no-cache --virtual .build-deps \
-        $PHPIZE_DEPS  \
-		freetype-dev \
-		imagemagick-dev \
-		libjpeg-turbo-dev \
-		libpng-dev \
-		libwebp-dev \
-		libzip-dev \
-		icu-dev \
- # PHP Extensions --------------------------------- \
-&& docker-php-ext-configure gd \
- 		--with-freetype \
- 		--with-jpeg \
- 		--with-webp \
- && docker-php-ext-install -j$(nproc) \
-        intl \
-        pdo_mysql \
-        opcache \
-        pcntl \
-        bcmath \
-        zip \
-        gd \
-        exif \
- # Pecl Extensions -------------------------------- \
- && pecl install apcu-5.1.21 && docker-php-ext-enable apcu \
- # Cleanup ---------------------------------------- \
- # - Detect Runtime Dependencies of the installed extensions. \
- # - src: https://github.com/docker-library/wordpress/blob/master/latest/php8.1/fpm-alpine/Dockerfile \
- && runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
-			| tr ',' '\n' | sort -u | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }'  \
-    )"; \
-  # Save Runtime Deps in a virtual deps
-	apk add --no-network --virtual .php-extensions-rundeps $runDeps; \
-  # Uninstall Everything we Installed (minus the runtime Deps)
-	apk del --no-network .build-deps
-
-###########################################################################
-# PHP Memcached:
-###########################################################################
-ARG INSTALL_MEMCACHED=false
-RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
-    apk add --no-cache --update libmemcached-libs zlib \
-    && apk add --no-cache --update --virtual .build-deps zlib-dev libmemcached-dev cyrus-sasl-dev \
-    $PHPIZE_DEPS \
-    && pecl install memcached \
-    && echo "extension=memcached.so" > /usr/local/etc/php/conf.d/20_memcached.ini \
-    && apk del -f .build-deps \
-;fi
 
 # ------------------------------------------------- Permissions --------------------------------------------------------
 
@@ -190,7 +144,6 @@ CMD ["php-fpm"]
 
 FROM base as app-dev
 
-ARG XDEBUG_VERSION
 ENV APP_ENV dev
 ENV APP_DEBUG 1
 
@@ -213,10 +166,7 @@ RUN apk add git openssh vim;
 ENV XDEBUG_CLIENT_HOST=172.17.0.1
 ENV XDEBUG_IDE_KEY=myide
 ENV PHP_IDE_CONFIG="serverName=${XDEBUG_IDE_KEY}"
-RUN apk add --virtual .buildtime-deps ${PHPIZE_DEPS} \
- && pecl install xdebug-${XDEBUG_VERSION} && docker-php-ext-enable xdebug \
- && apk del -f .buildtime-deps
-
+RUN install-php-extensions xdebug
 
 ###########################################################################
 # Dev Scripts/Configs:
