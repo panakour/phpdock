@@ -1,13 +1,5 @@
 version: '3.8'
 
-networks:
-  backnet:
-    driver: ${NETWORKS_DRIVER}
-
-volumes:
-  database:
-    driver: ${VOLUMES_DRIVER}
-
 services:
   php-fpm:
     image: ${COMPOSE_PROJECT_NAME}:${PHP_VERSION}
@@ -24,10 +16,6 @@ services:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
-    expose:
-      - "9000"
-    networks:
-      - backnet
 
   nginx:
     build:
@@ -44,8 +32,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    networks:
-      - backnet
     depends_on:
       - php-fpm
 #      php-fpm:
@@ -64,5 +50,3 @@ services:
       - ${DB_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
-    networks:
-      - backnet

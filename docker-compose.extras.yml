@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 #this compose file containes extra images and should be combined with docker-compose.yml or docker-compose.prod.yml
 services:
@@ -8,8 +8,6 @@ services:
       - ${DATA_PATH_HOST}/redis:/data
     ports:
       - "6379:6379"
-    networks:
-      - backnet
 
   memcached:
     image: memcached:latest
@@ -19,8 +17,6 @@ services:
       - "11211:11211"
     depends_on:
       - php-fpm
-    networks:
-      - backnet
 
   tor:
     image: dperson/torproxy
@@ -40,15 +36,11 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
-    networks:
-      - backnet
 
   chromium:
     image: montferret/chromium
     ports:
       - "9222:9222"
-    networks:
-      - backnet
 
   php-fpm7.3:
     build:
@@ -63,7 +55,3 @@ services:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
-    expose:
-      - "9000"
-    networks:
-      - backnet
