@@ -1,6 +1,7 @@
 ARG PHP_VERSION=8.0
 ARG COMPOSER_VERSION=2
 ARG COMPOSER_AUTH
+ARG NGINX_VERSION="latest"
 
 # -------------------------------------------------- Composer Image ----------------------------------------------------
 
@@ -29,7 +30,6 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 RUN chmod +x /usr/local/bin/install-php-extensions && \
     install-php-extensions ${PHP_EXTENSIONS}
 
-
 # ------------------------------------------------- Permissions --------------------------------------------------------
 
 # - Clean bundled config/users & recreate them with UID 1000 for docker compatability in dev container.
@@ -43,19 +43,18 @@ RUN deluser --remove-home www-data && adduser -u1000 -D www-data && rm -rf /var/
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Add in Base PHP Config
-COPY base-php.ini   $PHP_INI_DIR/conf.d
+COPY php/base-php.ini   $PHP_INI_DIR/conf.d
 
 # ---------------------------------------------- PHP FPM Configuration -------------------------------------------------
 
 # PHP-FPM config
-COPY fpm.conf  /usr/local/etc/php-fpm.d/
-
+COPY php/fpm.conf  /usr/local/etc/php-fpm.d/
 
 # --------------------------------------------------- Scripts ----------------------------------------------------------
 
-COPY scripts/*-base          \
-     scripts/healthcheck-*   \
-     scripts/command-loop    \
+COPY php/scripts/*-base          \
+     php/scripts/healthcheck-*   \
+     php/scripts/command-loop    \
      # to
      /usr/local/bin/
 
@@ -112,7 +111,6 @@ RUN composer config platform.php ${PHP_VERSION}
 # Install Dependeinces
 RUN composer install -n --no-progress --ignore-platform-reqs --no-dev --prefer-dist --no-scripts --no-autoloader
 
-
 FROM base AS app
 
 USER root
@@ -120,9 +118,9 @@ USER root
 ###########################################################################
 # Prod Scripts/Configs:
 ###########################################################################
-COPY scripts/*-prod /usr/local/bin/
+COPY php/scripts/*-prod /usr/local/bin/
 RUN  chmod +x /usr/local/bin/*-prod
-COPY prod-*   $PHP_INI_DIR/conf.d/
+COPY php/prod-*   $PHP_INI_DIR/conf.d/
 
 ###########################################################################
 # Final Touch:
@@ -150,12 +148,10 @@ ENV APP_DEBUG 1
 # Switch root to install stuff
 USER root
 
-
 ###########################################################################
 # Add some dev stuff:
 ###########################################################################
 RUN apk add git openssh vim;
-
 
 ###########################################################################
 # xdebug
@@ -171,11 +167,10 @@ RUN install-php-extensions xdebug
 ###########################################################################
 # Dev Scripts/Configs:
 ###########################################################################
-COPY scripts/*-dev /usr/local/bin/
+COPY php/scripts/*-dev /usr/local/bin/
 RUN  chmod +x /usr/local/bin/*-dev
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-COPY dev-*   $PHP_INI_DIR/conf.d/
-
+COPY php/dev-*   $PHP_INI_DIR/conf.d/
 
 ###########################################################################
 # Final Touch:
@@ -183,3 +178,45 @@ COPY dev-*   $PHP_INI_DIR/conf.d/
 USER www-data
 ENTRYPOINT ["entrypoint-dev"]
 CMD ["php-fpm"]
+
+# ======================================================================================================================
+# ======================================================================================================================
+#                                                  --- NGINX ---
+# ======================================================================================================================
+# ======================================================================================================================
+FROM nginx:${NGINX_VERSION}-alpine AS nginx
+
+RUN rm -rf /var/www/* /etc/nginx/conf.d/* && adduser -u 1000 -D -S -G www-data www-data
+COPY nginx/nginx-*   /usr/local/bin/
+COPY nginx/          /etc/nginx/
+RUN chown -R www-data /etc/nginx/ && chmod +x /usr/local/bin/nginx-*
+
+ENV PHP_FPM_HOST "localhost"
+ENV PHP_FPM_PORT "9000"
+ENV NGINX_LOG_FORMAT "json"
+
+EXPOSE 80 443
+
+USER www-data
+
+HEALTHCHECK CMD ["nginx-healthcheck"]
+
+ENTRYPOINT ["nginx-entrypoint"]
+
+# ======================================================================================================================
+#                                                 --- NGINX PROD ---
+# ======================================================================================================================
+
+FROM nginx AS nginx-prod
+
+COPY --chown=www-data:www-data --from=app /app/public /app/public
+
+# ======================================================================================================================
+#                                                 --- NGINX DEV ---
+# ======================================================================================================================
+FROM nginx AS nginx-dev
+
+ENV NGINX_LOG_FORMAT "combined"
+
+COPY --chown=www-data:www-data nginx/dev/*.conf   /etc/nginx/conf.d/
+COPY --chown=www-data:www-data nginx/dev/certs/   /etc/nginx/certs/

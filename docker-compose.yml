@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 networks:
   backnet:
@@ -10,8 +10,9 @@ volumes:
 
 services:
   php-fpm:
+    image: ${COMPOSE_PROJECT_NAME}:${PHP_VERSION}
     build:
-      context: ./php/
+      context: .
       target: app-dev
       args:
         - PHP_VERSION=${PHP_VERSION}
@@ -33,10 +34,10 @@ services:
 
   nginx:
     build:
-      context: ./nginx
+      context: .
+      target: nginx-dev
       args:
-        - PHP_UPSTREAM_CONTAINER=php-fpm
-        - PHP_UPSTREAM_PORT=9000
+        - NGINX_VERSION=${NGINX_VERSION}
     environment:
       - NGINX_SERVER_TOKENS=on
       - SELF_SIGNED_SSL=1
@@ -52,6 +53,8 @@ services:
       - backnet
     depends_on:
       - php-fpm
+#      php-fpm:
+#        condition: service_healthy
 
   mariadb:
     image: mariadb:${DB_VERSION}
