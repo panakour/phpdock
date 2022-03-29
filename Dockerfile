@@ -2,6 +2,7 @@ ARG PHP_VERSION=8.0
 ARG COMPOSER_VERSION=2
 ARG COMPOSER_AUTH
 ARG NGINX_VERSION="latest"
+ARG APP_CODE_PATH="."
 
 # -------------------------------------------------- Composer Image ----------------------------------------------------
 
@@ -43,18 +44,18 @@ RUN deluser --remove-home www-data && adduser -u1000 -D www-data && rm -rf /var/
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Add in Base PHP Config
-COPY php/base-php.ini   $PHP_INI_DIR/conf.d
+COPY phpdock/php/base-php.ini   $PHP_INI_DIR/conf.d
 
 # ---------------------------------------------- PHP FPM Configuration -------------------------------------------------
 
 # PHP-FPM config
-COPY php/fpm.conf  /usr/local/etc/php-fpm.d/
+COPY phpdock/php/fpm.conf  /usr/local/etc/php-fpm.d/
 
 # --------------------------------------------------- Scripts ----------------------------------------------------------
 
-COPY php/scripts/*-base          \
-     php/scripts/healthcheck-*   \
-     php/scripts/command-loop    \
+COPY phpdock/php/scripts/*-base          \
+     phpdock/php/scripts/healthcheck-*   \
+     phpdock/php/scripts/command-loop    \
      # to
      /usr/local/bin/
 
@@ -66,7 +67,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # ----------------------------------------------------- MISC -----------------------------------------------------------
 
-WORKDIR "/var/www"
+WORKDIR /webdata
 USER www-data
 
 # Common PHP Frameworks Env Variables
@@ -97,13 +98,14 @@ FROM composer as vendor
 
 ARG PHP_VERSION
 ARG COMPOSER_AUTH
+ARG APP_CODE_PATH
 # A Json Object with remote repository token to clone private Repos with composer
 # Reference: https://getcomposer.org/doc/03-cli.md#composer-auth
 ENV COMPOSER_AUTH $COMPOSER_AUTH
 
 # Copy Dependencies files
-COPY app/composer.json composer.json
-COPY app/composer.lock composer.lock
+COPY $APP_CODE_PATH/composer.json composer.json
+COPY $APP_CODE_PATH/composer.lock composer.lock
 
 # Set PHP Version of the Image
 RUN composer config platform.php ${PHP_VERSION}
@@ -111,16 +113,17 @@ RUN composer config platform.php ${PHP_VERSION}
 # Install Dependeinces
 RUN composer install -n --no-progress --ignore-platform-reqs --no-dev --prefer-dist --no-scripts --no-autoloader
 
-FROM base AS app
+FROM base AS php-prod
 
+ARG APP_CODE_PATH
 USER root
 
 ###########################################################################
 # Prod Scripts/Configs:
 ###########################################################################
-COPY php/scripts/*-prod /usr/local/bin/
+COPY phpdock/php/scripts/*-prod /usr/local/bin/
 RUN  chmod +x /usr/local/bin/*-prod
-COPY php/prod-*   $PHP_INI_DIR/conf.d/
+COPY phpdock/php/prod-*   $PHP_INI_DIR/conf.d/
 
 ###########################################################################
 # Final Touch:
@@ -129,7 +132,7 @@ USER www-data
 # Copy Vendor
 COPY --chown=www-data:www-data --from=vendor /app/vendor /app/vendor
 # Copy App Code
-COPY --chown=www-data:www-data . .
+COPY --chown=www-data:www-data $APP_CODE_PATH .
 # Run Composer Install
 RUN post-build-prod
 ENTRYPOINT ["entrypoint-prod"]
@@ -140,7 +143,7 @@ CMD ["php-fpm"]
 #                                                   --- DEV ---
 # ======================================================================================================================
 
-FROM base as app-dev
+FROM base as php-dev
 
 ENV APP_ENV dev
 ENV APP_DEBUG 1
@@ -167,10 +170,10 @@ RUN install-php-extensions xdebug
 ###########################################################################
 # Dev Scripts/Configs:
 ###########################################################################
-COPY php/scripts/*-dev /usr/local/bin/
+COPY phpdock/php/scripts/*-dev /usr/local/bin/
 RUN  chmod +x /usr/local/bin/*-dev
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-COPY php/dev-*   $PHP_INI_DIR/conf.d/
+COPY phpdock/php/dev-*   $PHP_INI_DIR/conf.d/
 
 ###########################################################################
 # Final Touch:
@@ -187,8 +190,8 @@ CMD ["php-fpm"]
 FROM nginx:${NGINX_VERSION}-alpine AS nginx
 
 RUN rm -rf /var/www/* /etc/nginx/conf.d/* && adduser -u 1000 -D -S -G www-data www-data
-COPY nginx/nginx-*   /usr/local/bin/
-COPY nginx/          /etc/nginx/
+COPY phpdock/nginx/nginx-*   /usr/local/bin/
+COPY phpdock/nginx/          /etc/nginx/
 RUN chown -R www-data /etc/nginx/ && chmod +x /usr/local/bin/nginx-*
 
 ENV PHP_FPM_HOST "localhost"
@@ -209,7 +212,7 @@ ENTRYPOINT ["nginx-entrypoint"]
 
 FROM nginx AS nginx-prod
 
-COPY --chown=www-data:www-data --from=app /app/public /app/public
+COPY --chown=www-data:www-data --from=php-prod /app/public /app/public
 
 # ======================================================================================================================
 #                                                 --- NGINX DEV ---
@@ -218,5 +221,5 @@ FROM nginx AS nginx-dev
 
 ENV NGINX_LOG_FORMAT "combined"
 
-COPY --chown=www-data:www-data nginx/dev/*.conf   /etc/nginx/conf.d/
-COPY --chown=www-data:www-data nginx/dev/certs/   /etc/nginx/certs/
+COPY --chown=www-data:www-data phpdock/nginx/dev/*.conf   /etc/nginx/conf.d/
+COPY --chown=www-data:www-data phpdock/nginx/dev/certs/   /etc/nginx/certs/

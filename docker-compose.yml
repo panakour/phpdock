@@ -13,16 +13,13 @@ services:
     image: ${COMPOSE_PROJECT_NAME}:${PHP_VERSION}
     build:
       context: .
-      target: app-dev
+      target: php-dev
       args:
         - PHP_VERSION=${PHP_VERSION}
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
-        - INSTALL_MEMCACHED=true
-        - INSTALL_PHPREDIS=true
-        - INSTALL_IMAGEMAGICK=true
         # To authenticate to private registry either use username / password, or Oauth key/secret / etc
         # Please add Composer Auth JSON Object
-        - COMPOSER_AUTH="{}"
+        - COMPOSER_AUTH=${COMPOSER_AUTH}
     environment:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
@@ -44,11 +41,9 @@ services:
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
       - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
-      - ./logs/nginx/:/var/log/nginx
-      - ${NGINX_SSL_PATH}:/etc/nginx/ssl
     ports:
-      - "${NGINX_HOST_HTTP_PORT}:80"
-      - "${NGINX_HOST_HTTPS_PORT}:443"
+      - "80:80"
+      - "443:443"
     networks:
       - backnet
     depends_on:

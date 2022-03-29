@@ -10,7 +10,7 @@ server {
     # ssl_certificate_key /etc/nginx/ssl/default.key;
 
     server_name laravel.localhost;
-    root /var/www/laravel/public;
+    root /webdata/laravel/public;
     index index.php index.html index.htm;
 
     location / {
@@ -37,10 +37,9 @@ server {
     }
 
     location /.well-known/acme-challenge/ {
-        root /var/www/letsencrypt/;
+        root /webdata/letsencrypt/;
         log_not_found off;
     }
 
-    error_log /var/log/nginx/laravel_error.log;
     access_log off;
 }

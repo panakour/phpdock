@@ -52,16 +52,13 @@ services:
 
   php-fpm7.3:
     build:
-      context: ./php/
-      target: app-dev
+      context: .
+      target: php-dev
       args:
         - PHP_VERSION=7.3
-        - INSTALL_MEMCACHED=true
-        - INSTALL_PHPREDIS=true
-        - INSTALL_IMAGEMAGICK=true
         # To authenticate to private registry either use username / password, or Oauth key/secret / etc
         # Please add Composer Auth JSON Object
-        - COMPOSER_AUTH="{}"
+        - COMPOSER_AUTH=${COMPOSER_AUTH}
     environment:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
