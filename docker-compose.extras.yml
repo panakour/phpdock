@@ -55,3 +55,14 @@ services:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    privileged: true
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - ${DATA_PATH_HOST}/jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
