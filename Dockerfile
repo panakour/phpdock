@@ -36,7 +36,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions && \
 # - Clean bundled config/users & recreate them with UID 1000 for docker compatability in dev container.
 # - Create composer directories (since we run as non-root later)
 RUN deluser --remove-home www-data && adduser -u1000 -D www-data && rm -rf /var/www /usr/local/etc/php-fpm.d/* && \
-    mkdir -p /var/www/.composer /app && chown -R www-data:www-data /app /var/www/.composer
+    mkdir -p /var/www/.composer /webdata && chown -R www-data:www-data /webdata /var/www/.composer
 
 # ------------------------------------------------ PHP Configuration ---------------------------------------------------
 
@@ -96,12 +96,15 @@ CMD ["php-fpm"]
 ###########################################################################
 FROM composer as vendor
 
+
 ARG PHP_VERSION
 ARG COMPOSER_AUTH
 ARG APP_CODE_PATH
 # A Json Object with remote repository token to clone private Repos with composer
 # Reference: https://getcomposer.org/doc/03-cli.md#composer-auth
 ENV COMPOSER_AUTH $COMPOSER_AUTH
+
+WORKDIR /webdata
 
 # Copy Dependencies files
 COPY $APP_CODE_PATH/composer.json composer.json
@@ -130,7 +133,7 @@ COPY phpdock/php/prod-*   $PHP_INI_DIR/conf.d/
 ###########################################################################
 USER www-data
 # Copy Vendor
-COPY --chown=www-data:www-data --from=vendor /app/vendor /app/vendor
+COPY --chown=www-data:www-data --from=vendor /webdata/vendor /webdata/vendor
 # Copy App Code
 COPY --chown=www-data:www-data $APP_CODE_PATH .
 # Run Composer Install
@@ -212,7 +215,8 @@ ENTRYPOINT ["nginx-entrypoint"]
 
 FROM nginx AS nginx-prod
 
-COPY --chown=www-data:www-data --from=php-prod /app/public /app/public
+COPY --chown=www-data:www-data phpdock/nginx/sites   /etc/nginx/sites-available
+COPY --chown=www-data:www-data --from=php-prod /webdata /webdata
 
 # ======================================================================================================================
 #                                                 --- NGINX DEV ---
