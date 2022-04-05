@@ -23,7 +23,7 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 # ------------------------------------- Install Packages Needed Inside Base Image --------------------------------------
 
-RUN apk add --no-cache tini zip
+RUN apk add --no-cache tini zip fcgi
 
 # ---------------------------------------- Install / Enable PHP Extensions ---------------------------------------------
 ARG PHP_EXTENSIONS
@@ -54,12 +54,12 @@ COPY phpdock/php/fpm.conf  /usr/local/etc/php-fpm.d/
 # --------------------------------------------------- Scripts ----------------------------------------------------------
 
 COPY phpdock/php/scripts/*-base          \
-     phpdock/php/scripts/healthcheck-*   \
+     phpdock/php/scripts/php-fpm-healthcheck   \
      phpdock/php/scripts/command-loop    \
      # to
      /usr/local/bin/
 
-RUN  chmod +x /usr/local/bin/*-base /usr/local/bin/healthcheck-* /usr/local/bin/command-loop
+RUN  chmod +x /usr/local/bin/*-base /usr/local/bin/php-fpm-healthcheck /usr/local/bin/command-loop
 
 # ---------------------------------------------------- Composer --------------------------------------------------------
 
@@ -79,7 +79,7 @@ RUN php-fpm -t
 
 # ---------------------------------------------------- HEALTH ----------------------------------------------------------
 
-HEALTHCHECK CMD ["healthcheck-fpm"]
+HEALTHCHECK CMD ["php-fpm-healthcheck"]
 
 # -------------------------------------------------- ENTRYPOINT --------------------------------------------------------
 

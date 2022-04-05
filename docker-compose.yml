@@ -33,9 +33,8 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - php-fpm
-#      php-fpm:
-#        condition: service_healthy
+      php-fpm:
+        condition: service_healthy
 
   mariadb:
     image: mariadb:${DB_VERSION}
