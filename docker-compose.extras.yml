@@ -28,7 +28,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6
     environment:
       - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ulimits:
       memlock:
         soft: -1
@@ -36,6 +36,17 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
+
+
+  elasticsearch8:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.4.1
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+    ports:
+      - "9201:9200"
+      - "9301:9300"
 
   chromium:
     image: montferret/chromium
