@@ -53,20 +53,6 @@ services:
     ports:
       - "9222:9222"
 
-  php-fpm7.3:
-    build:
-      context: .
-      target: php-dev
-      args:
-        - PHP_VERSION=7.3
-        # To authenticate to private registry either use username / password, or Oauth key/secret / etc
-        # Please add Composer Auth JSON Object
-        - COMPOSER_AUTH=${COMPOSER_AUTH}
-    environment:
-      - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
-    volumes:
-      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
-
   jenkins:
     image: jenkins/jenkins:lts
     privileged: true
@@ -84,3 +70,29 @@ services:
     ports:
       - '1025:1025'
       - '8025:8025'
+
+  php-fpm7.3:
+    build:
+      context: .
+      target: php-dev
+      args:
+        - PHP_VERSION=7.3
+        - PHP_EXTENSIONS=${PHP_EXTENSIONS}
+        - COMPOSER_AUTH=${COMPOSER_AUTH}
+    environment:
+      - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+
+  php-fpm7.4:
+    build:
+      context: .
+      target: php-dev
+      args:
+        - PHP_VERSION=7.4
+        - PHP_EXTENSIONS=${PHP_EXTENSIONS}
+        - COMPOSER_AUTH=${COMPOSER_AUTH}
+    environment:
+      - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
