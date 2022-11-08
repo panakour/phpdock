@@ -1,7 +1,7 @@
-ARG PHP_VERSION=8.0
+ARG PHP_VERSION="8.2.0RC5"
 ARG COMPOSER_VERSION=2
 ARG COMPOSER_AUTH
-ARG NGINX_VERSION="latest"
+ARG NGINX_VERSION=1.22
 ARG APP_CODE_PATH="."
 
 # -------------------------------------------------- Composer Image ----------------------------------------------------
@@ -201,8 +201,6 @@ ENV PHP_FPM_HOST "localhost"
 ENV PHP_FPM_PORT "9000"
 ENV NGINX_LOG_FORMAT "json"
 
-EXPOSE 80 443
-
 USER www-data
 
 HEALTHCHECK CMD ["nginx-healthcheck"]
@@ -215,13 +213,24 @@ ENTRYPOINT ["nginx-entrypoint"]
 
 FROM nginx AS nginx-prod
 
-COPY --chown=www-data:www-data phpdock/nginx/sites   /etc/nginx/sites-available
-COPY --chown=www-data:www-data --from=php-prod /webdata /webdata
+EXPOSE 8080
+
+USER root
+
+RUN SECURITY_UPGRADES="curl"; \
+    apk add --no-cache --upgrade ${SECURITY_UPGRADES}
+
+USER www-data
+
+# Copy Public folder + Assets that's going to be served from Nginx
+COPY --chown=www-data:www-data --from=php-prod /webdata/public /webdata/public
 
 # ======================================================================================================================
 #                                                 --- NGINX DEV ---
 # ======================================================================================================================
 FROM nginx AS nginx-dev
+
+EXPOSE 80 443
 
 ENV NGINX_LOG_FORMAT "combined"
 

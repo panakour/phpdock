@@ -26,6 +26,8 @@ services:
     environment:
       - NGINX_SERVER_TOKENS=on
       - SELF_SIGNED_SSL=1
+      - PHP_FPM_HOST=${PHP_FPM_HOST}
+      - PHP_FPM_PORT=${PHP_FPM_PORT}
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
       - ${NGINX_SITES_PATH}:/etc/nginx/sites-available

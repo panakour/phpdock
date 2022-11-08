@@ -1,0 +1,28 @@
+apiVersion: skaffold/v3
+kind: Config
+metadata:
+  name: phpdock
+profiles:
+  - name: minikube-profile
+    activation:
+      - kubeContext: minikube
+    build:
+      local:
+        useDockerCLI: true
+        useBuildkit: true
+      artifacts:
+        - image: php-prod
+          context: .
+          docker:
+            dockerfile: Dockerfile
+            target: php-prod
+            buildArgs:
+              PHP_EXTENSIONS: "intl pdo_mysql opcache pcntl bcmath zip gd exif apcu tokenizer pdo_mysql mbstring mcrypt xmlreader gettext"
+        - image: nginx-prod
+          context: .
+          docker:
+            dockerfile: Dockerfile
+            target: nginx-prod
+    manifests:
+      rawYaml:
+        - k8s.yaml

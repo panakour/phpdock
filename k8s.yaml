@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend-nginx
+          image: nginx-prod
+          ports:
+            - name: nginx
+              containerPort: 8080
+          env:
+            - name: NGINX_SERVER_TOKENS
+              value: "off"
+            - name: PHP_FPM_HOST
+              value: 127.0.0.1
+        - name: backend-php-fpm
+          image: php-prod
+          ports:
+            - name: php-fpm
+              containerPort: 9000
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpdock-service
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
