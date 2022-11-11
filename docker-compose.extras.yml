@@ -66,7 +66,8 @@ services:
 
 
   mailhog:
-    image: mailhog/mailhog
+    image: mailhog:local
+    build: https://github.com/mailhog/MailHog.git
     ports:
       - '1025:1025'
       - '8025:8025'
@@ -90,6 +91,19 @@ services:
       target: php-dev
       args:
         - PHP_VERSION=7.4
+        - PHP_EXTENSIONS=${PHP_EXTENSIONS}
+        - COMPOSER_AUTH=${COMPOSER_AUTH}
+    environment:
+      - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+
+  php-fpm8.0:
+    build:
+      context: .
+      target: php-dev
+      args:
+        - PHP_VERSION=8.0
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
         - COMPOSER_AUTH=${COMPOSER_AUTH}
     environment:
