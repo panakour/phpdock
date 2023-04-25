@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   php-fpm:
+    container_name: phpdock-php-fpm-latest
     image: ${COMPOSE_PROJECT_NAME}:${PHP_VERSION}
     build:
       context: .
