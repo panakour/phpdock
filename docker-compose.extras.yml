@@ -15,8 +15,6 @@ services:
       - ${DATA_PATH_HOST}/memcached:/var/lib/memcached
     ports:
       - "11211:11211"
-    depends_on:
-      - php-fpm
 
   tor:
     image: dperson/torproxy
@@ -25,7 +23,7 @@ services:
       - 9050:9050
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.15
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
@@ -39,7 +37,7 @@ services:
 
 
   elasticsearch8:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
@@ -121,6 +119,32 @@ services:
       target: php-dev
       args:
         - PHP_VERSION=8.0
+        - PHP_EXTENSIONS=${PHP_EXTENSIONS}
+        - COMPOSER_AUTH=${COMPOSER_AUTH}
+    environment:
+      - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+
+  php-fpm8.1:
+    build:
+      context: .
+      target: php-dev
+      args:
+        - PHP_VERSION=8.1
+        - PHP_EXTENSIONS=${PHP_EXTENSIONS}
+        - COMPOSER_AUTH=${COMPOSER_AUTH}
+    environment:
+      - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+
+  php-fpm8.3:
+    build:
+      context: .
+      target: php-dev
+      args:
+        - PHP_VERSION=8.3
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
         - COMPOSER_AUTH=${COMPOSER_AUTH}
     environment:
