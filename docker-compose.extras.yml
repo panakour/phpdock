@@ -139,12 +139,12 @@ services:
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
 
-  php-fpm8.3:
+  php-fpm8.2:
     build:
       context: .
       target: php-dev
       args:
-        - PHP_VERSION=8.3
+        - PHP_VERSION=8.2
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
         - COMPOSER_AUTH=${COMPOSER_AUTH}
     environment:
