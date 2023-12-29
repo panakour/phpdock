@@ -1,7 +1,7 @@
 ARG PHP_VERSION="8.3"
 ARG COMPOSER_VERSION=2
 ARG COMPOSER_AUTH
-ARG NGINX_VERSION=1.22
+ARG NGINX_VERSION=1.25
 ARG APP_CODE_PATH="."
 
 # -------------------------------------------------- Composer Image ----------------------------------------------------
