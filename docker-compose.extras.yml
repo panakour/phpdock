@@ -23,10 +23,14 @@ services:
       - 9050:9050
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.15
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.24
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - cluster.routing.allocation.disk.watermark.flood_stage=95%
+      - cluster.routing.allocation.disk.watermark.high=90%
+      - cluster.routing.allocation.disk.watermark.low=85%
+      - cluster.info.update.interval=1m
     ulimits:
       memlock:
         soft: -1
@@ -37,7 +41,7 @@ services:
 
 
   elasticsearch8:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.2
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
