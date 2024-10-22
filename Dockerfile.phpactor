@@ -1,0 +1,19 @@
+FROM php:8.3-cli
+
+WORKDIR /Users/panakour/Code
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN curl -Lo phpactor.phar https://github.com/phpactor/phpactor/releases/latest/download/phpactor.phar
+
+RUN chmod a+x phpactor.phar && mv phpactor.phar /usr/local/bin/phpactor
+
+EXPOSE 9090
+
+CMD ["phpactor", "language-server", "--address=0.0.0.0:9090", "-vvv"]

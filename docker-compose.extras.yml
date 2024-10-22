@@ -164,3 +164,14 @@ services:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+
+  phpactor:
+    build:
+      context: .
+      dockerfile: Dockerfile.phpactor
+    volumes:
+      - /Users/panakour/Code:/Users/panakour/Code
+    ports:
+      - "9090:9090"
+    tty: true
+    restart: unless-stopped
