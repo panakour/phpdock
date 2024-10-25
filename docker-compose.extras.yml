@@ -23,7 +23,7 @@ services:
       - 9050:9050
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.24
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.25
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
@@ -41,7 +41,7 @@ services:
 
 
   elasticsearch8:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
