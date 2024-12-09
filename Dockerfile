@@ -36,7 +36,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions && \
 # - Clean bundled config/users & recreate them with UID 1000 for docker compatability in dev container.
 # - Create composer directories (since we run as non-root later)
 RUN deluser --remove-home www-data && adduser -u1000 -D www-data && rm -rf /var/www /usr/local/etc/php-fpm.d/* && \
-    mkdir -p /var/www/.composer /webdata && chown -R www-data:www-data /webdata /var/www/.composer
+    mkdir -p /var/www/.composer ${APP_CODE_PATH_CONTAINER} && chown -R www-data:www-data ${APP_CODE_PATH_CONTAINER} /var/www/.composer
 
 # ------------------------------------------------ PHP Configuration ---------------------------------------------------
 
@@ -67,7 +67,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # ----------------------------------------------------- MISC -----------------------------------------------------------
 
-WORKDIR /webdata
+WORKDIR ${APP_CODE_PATH_CONTAINER}
 USER www-data
 
 # Common PHP Frameworks Env Variables
@@ -104,7 +104,7 @@ ARG APP_CODE_PATH
 # Reference: https://getcomposer.org/doc/03-cli.md#composer-auth
 ENV COMPOSER_AUTH $COMPOSER_AUTH
 
-WORKDIR /webdata
+WORKDIR ${APP_CODE_PATH_CONTAINER}
 
 # Copy Dependencies files
 COPY $APP_CODE_PATH/composer.json composer.json
@@ -133,7 +133,7 @@ COPY phpdock/php/prod-*   $PHP_INI_DIR/conf.d/
 ###########################################################################
 USER www-data
 # Copy Vendor
-COPY --chown=www-data:www-data --from=vendor /webdata/vendor /webdata/vendor
+COPY --chown=www-data:www-data --from=vendor ${APP_CODE_PATH_CONTAINER}/vendor ${APP_CODE_PATH_CONTAINER}/vendor
 # Copy App Code
 COPY --chown=www-data:www-data $APP_CODE_PATH .
 # Run Composer Install
