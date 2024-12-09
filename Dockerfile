@@ -6,7 +6,7 @@ ARG APP_CODE_PATH="."
 
 # -------------------------------------------------- Composer Image ----------------------------------------------------
 
-FROM composer:${COMPOSER_VERSION} as composer
+FROM composer:${COMPOSER_VERSION} AS composer
 
 # ======================================================================================================================
 #                                                   --- Base ---
@@ -73,7 +73,7 @@ ENTRYPOINT ["entrypoint-base"]
 CMD ["php-fpm"]
 
 
-FROM base as php-dev
+FROM base AS php-dev
 
 ENV APP_ENV dev
 ENV APP_DEBUG 1
