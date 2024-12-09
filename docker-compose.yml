@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   php-fpm:
     container_name: phpdock-php-fpm-latest
@@ -26,7 +24,6 @@ services:
         - NGINX_VERSION=${NGINX_VERSION}
     environment:
       - APP_CODE_PATH_CONTAINER=${APP_CODE_PATH_CONTAINER}
-      - NGINX_SERVER_TOKENS=on
       - SELF_SIGNED_SSL=1
       - PHP_FPM_HOST=${PHP_FPM_HOST}
       - PHP_FPM_PORT=${PHP_FPM_PORT}

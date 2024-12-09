@@ -1,6 +1,4 @@
-version: '3.8'
-
-#this compose file containes extra images and should be combined with docker-compose.yml or docker-compose.prod.yml
+#this compose file contains extra services and should be combined with docker-compose.yml
 services:
   redis:
     image: redis:latest
