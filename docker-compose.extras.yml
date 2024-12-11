@@ -21,7 +21,7 @@ services:
       - 9050:9050
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.25
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.26
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
@@ -39,7 +39,7 @@ services:
 
 
   elasticsearch8:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.5
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
@@ -99,11 +99,11 @@ services:
   php-fpm7.3:
     build:
       context: .
-      target: php-dev
+      target: php
       args:
         - PHP_VERSION=7.3
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
-        - COMPOSER_AUTH=${COMPOSER_AUTH}
+        - APP_CODE_PATH_CONTAINER=${APP_CODE_PATH_CONTAINER}
     environment:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
@@ -112,11 +112,11 @@ services:
   php-fpm7.4:
     build:
       context: .
-      target: php-dev
+      target: php
       args:
         - PHP_VERSION=7.4
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
-        - COMPOSER_AUTH=${COMPOSER_AUTH}
+        - APP_CODE_PATH_CONTAINER=${APP_CODE_PATH_CONTAINER}
     environment:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
@@ -125,11 +125,11 @@ services:
   php-fpm8.0:
     build:
       context: .
-      target: php-dev
+      target: php
       args:
         - PHP_VERSION=8.0
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
-        - COMPOSER_AUTH=${COMPOSER_AUTH}
+        - APP_CODE_PATH_CONTAINER=${APP_CODE_PATH_CONTAINER}
     environment:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
@@ -138,11 +138,11 @@ services:
   php-fpm8.1:
     build:
       context: .
-      target: php-dev
+      target: php
       args:
         - PHP_VERSION=8.1
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
-        - COMPOSER_AUTH=${COMPOSER_AUTH}
+        - APP_CODE_PATH_CONTAINER=${APP_CODE_PATH_CONTAINER}
     environment:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
@@ -151,11 +151,11 @@ services:
   php-fpm8.2:
     build:
       context: .
-      target: php-dev
+      target: php
       args:
         - PHP_VERSION=8.2
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
-        - COMPOSER_AUTH=${COMPOSER_AUTH}
+        - APP_CODE_PATH_CONTAINER=${APP_CODE_PATH_CONTAINER}
     environment:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
@@ -164,11 +164,11 @@ services:
   php-fpm8.3:
     build:
       context: .
-      target: php-dev
+      target: php
       args:
         - PHP_VERSION=8.3
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
-        - COMPOSER_AUTH=${COMPOSER_AUTH}
+        - APP_CODE_PATH_CONTAINER=${APP_CODE_PATH_CONTAINER}
     environment:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:

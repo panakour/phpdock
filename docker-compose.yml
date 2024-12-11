@@ -4,13 +4,11 @@ services:
     image: ${COMPOSE_PROJECT_NAME}:${PHP_VERSION}
     build:
       context: .
-      target: php-dev
+      dockerfile: Dockerfile
       args:
         - PHP_VERSION=${PHP_VERSION}
         - PHP_EXTENSIONS=${PHP_EXTENSIONS}
-        # To authenticate to private registry either use username / password, or Oauth key/secret / etc
-        # Please add Composer Auth JSON Object
-        - COMPOSER_AUTH=${COMPOSER_AUTH}
+        - APP_CODE_PATH_CONTAINER=${APP_CODE_PATH_CONTAINER}
     environment:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
     volumes:
@@ -19,7 +17,7 @@ services:
   nginx:
     build:
       context: .
-      target: nginx
+      dockerfile: Dockerfile.nginx
       args:
         - NGINX_VERSION=${NGINX_VERSION}
     environment:

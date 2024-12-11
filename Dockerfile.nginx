@@ -1,0 +1,20 @@
+ARG NGINX_VERSION=1.27
+ARG APP_CODE_PATH="."
+
+FROM nginx:${NGINX_VERSION}-alpine AS nginx
+
+RUN rm -rf /etc/nginx/conf.d/*
+COPY nginx/nginx-*   /usr/local/bin/
+COPY nginx/          /etc/nginx/
+RUN chmod +x /usr/local/bin/nginx-*
+
+ENV PHP_FPM_HOST="localhost"
+ENV PHP_FPM_PORT="9000"
+
+ENTRYPOINT ["nginx-entrypoint"]
+
+EXPOSE 80 443
+
+COPY nginx/dev/*.conf   /etc/nginx/conf.d/
+COPY nginx/dev/certs/   /etc/nginx/certs/
+COPY nginx/sites/       /etc/nginx/sites-available

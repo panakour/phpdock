@@ -1,7 +1,8 @@
 #!/bin/sh
 set -eu
 
-echo "► Starting Main Entrypoint..."
+echo "► Starting Entrypoint..."
+
 
 # Run Dockerfile's CMD (default: $> php-fpm )
 echo "► Starting... cmd: ${@}"
