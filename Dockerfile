@@ -17,6 +17,7 @@ ENV APP_CODE_PATH_CONTAINER=$APP_CODE_PATH_CONTAINER
 ENV XDEBUG_CLIENT_HOST=172.17.0.1
 ENV XDEBUG_IDE_KEY=myide
 ENV PHP_IDE_CONFIG="serverName=${XDEBUG_IDE_KEY}"
+ENV PATH="/root/.composer/vendor/bin:$PATH"
 
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
@@ -28,6 +29,8 @@ RUN chmod +x /usr/local/bin/install-php-extensions && \
     install-php-extensions ${PHP_EXTENSIONS}
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+RUN composer global require laravel/installer
 
 # PHP-FPM config
 COPY php/fpm.conf  /usr/local/etc/php-fpm.d/
