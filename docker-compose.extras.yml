@@ -39,7 +39,7 @@ services:
 
 
   elasticsearch8:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.5
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
