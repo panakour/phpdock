@@ -1,5 +1,17 @@
 #this compose file contains extra services and should be combined with docker-compose.yml
 services:
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - ${DATA_PATH_HOST}/mongodb:/data/db
+
   redis:
     image: redis:latest
     volumes:
