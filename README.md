@@ -1,4 +1,6 @@
-# PHPDock
+# [DEPRECATED] in favor of nix
+
+## PHPDock
 
 PHPDock is a Docker-based development environment for PHP applications. It simplifies the setup and management of PHP development environments by using Docker containers.
 
