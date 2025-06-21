@@ -1,4 +1,4 @@
-# [DEPRECATED] in favor of nix
+# [DEPRECATED] in favor of [nix](https://github.com/panakour/php-nix-flake-templates)
 
 ## PHPDock
 
